@@ -6,8 +6,3 @@ services:
     environment:
       LLM_ENDPOINT: ${LLM_ENDPOINT:-http://host.docker.internal:11434/v1}
       LLM_MODEL: ${LLM_MODEL:-qwen2.5:3b}
-    volumes:
-      - catalogue_data:/app/catalogue.db
-
-volumes:
-  catalogue_data:

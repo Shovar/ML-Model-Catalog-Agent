@@ -2,6 +2,10 @@
 
 A LangChain-powered AI agent that answers questions about an ML model catalogue using tool calls. Runs locally with FastAPI + SQLite + Ollama (llama.cpp + Metal acceleration).
 
+## Why this project
+
+Most "LLM agent" demos show retrieval over static documents. This one simulates a more operational problem: once an organisation has several ML models running in production, how do you keep track of their status,  ownership, and health, and make that information accessible through natural language without sacrificing traceability? Every answer here is grounded in an explicit tool call against real catalogue data — never  free-form generation from the model's memory.
+
 ## Architecture
 
 ```
@@ -17,6 +21,12 @@ The agent has **3 tools** — it *must* call them for factual answers (no halluc
 | `get_model_status(model_id)` | Status, owner, environment, deployment metadata |
 | `list_stale_models(threshold_days)` | Models not updated/deployed past N days |
 | `get_latency_metrics(model_id, hours)` | Recent p95 latency, drift, accuracy, availability |
+
+## Requirements
+
+- Python 3.11+
+- [Ollama](https://ollama.com) installed locally
+- Docker (optional, only for the containerized setup)
 
 ## Quick start
 
@@ -87,6 +97,8 @@ Plus 8 metric snapshots with latency, drift, accuracy, and availability readings
 | `LLM_MODEL` | `qwen2.5:3b` | Model name served by Ollama |
 | `DATABASE_URL` | `sqlite:///catalogue.db` | SQLite database path |
 
+Ollama is used here for local development on Apple Silicon (Metal acceleration, no GPU passthrough needed). Because both Ollama and vLLM expose an OpenAI-compatible endpoint, pointing `LLM_ENDPOINT`/`LLM_MODEL` at a vLLM deployment on GPU infrastructure requires no code changes — only different env values.
+
 ## Docker
 
 ```bash
@@ -125,3 +137,11 @@ ollama pull qwen2.5:3b
 | `make test` | Run tool tests (in-memory SQLite, no LLM needed) |
 | `make lint` | Run ruff |
 | `make clean` | Delete database and caches |
+
+## Limitations
+
+- Tools require an exact `model_id` (e.g. `mod-003`); there's no name-to-ID 
+  resolution yet, so "tell me about the fraud detector" won't resolve to 
+  `mod-001` automatically.
+- Single-turn only — no conversation memory across requests.
+- No authentication on the API — local/demo use only.
