@@ -1,13 +1,13 @@
 # ML Model Catalogue Agent
 
-A LangChain-powered AI agent that answers questions about an ML model catalogue using tool calls. Runs locally with FastAPI + SQLite + vLLM.
+A LangChain-powered AI agent that answers questions about an ML model catalogue using tool calls. Runs locally with FastAPI + SQLite + Ollama (llama.cpp + Metal acceleration).
 
 ## Architecture
 
 ```
 POST /chat  →  LangChain Agent  →  Tools  →  SQLite Catalogue
                         ↕
-                   vLLM (local)
+              Ollama (localhost:11434)
 ```
 
 The agent has **3 tools** — it *must* call them for factual answers (no hallucination):
@@ -21,16 +21,20 @@ The agent has **3 tools** — it *must* call them for factual answers (no halluc
 ## Quick start
 
 ```bash
-# 1. Install
+# 1. Install the agent
 pip install -e ".[dev]"
 
 # 2. Seed the database
 make seed
 
-# 3. Start the API
+# 3. Make sure Ollama is running with a model loaded
+ollama pull qwen2.5:3b
+ollama serve   # already running if you used the app
+
+# 4. Start the API
 make run
 
-# 4. In another terminal, ask it questions
+# 5. In another terminal, ask it questions
 curl -X POST http://localhost:8000/chat \
   -H "Content-Type: application/json" \
   -d '{"question": "Which models are stale?"}'
@@ -53,13 +57,6 @@ curl -X POST http://localhost:8000/chat \
     {
       "tool_name": "list_stale_models",
       "arguments": {"threshold_days": 30},
-      "raw_output": "[{\"id\": \"mod-003\", ...}]"
-    }
-  ],
-  "evidence": [
-    {
-      "tool_name": "list_stale_models",
-      "arguments": {},
       "raw_output": "[{\"id\": \"mod-003\", ...}]"
     }
   ]
@@ -86,8 +83,8 @@ Plus 8 metric snapshots with latency, drift, accuracy, and availability readings
 
 | Variable | Default | Description |
 |---|---|---|
-| `VLLM_ENDPOINT` | `http://localhost:8001/v1` | vLLM OpenAI-compatible endpoint |
-| `VLLM_MODEL` | `Qwen/Qwen2.5-3B-Instruct` | Model name served by vLLM |
+| `LLM_ENDPOINT` | `http://localhost:11434/v1` | Ollama OpenAI-compatible endpoint |
+| `LLM_MODEL` | `qwen2.5:3b` | Model name served by Ollama |
 | `DATABASE_URL` | `sqlite:///catalogue.db` | SQLite database path |
 
 ## Docker
@@ -104,7 +101,20 @@ Then `curl` the same `/chat` endpoint on port 8000.
 kubectl apply -f k8s/deployment.yaml
 ```
 
-The deployment expects a `vllm-service` to be running in the cluster for the agent to call.
+The deployment expects an `ollama-service` to be available in the cluster for the agent to call.
+
+## Getting started with Ollama
+
+```bash
+# Install Ollama (macOS)
+brew install ollama
+
+# Pull a model
+ollama pull qwen2.5:3b
+
+# Ollama runs automatically as a service on port 11434
+# The agent connects to it via the OpenAI-compatible endpoint at http://localhost:11434/v1
+```
 
 ## Commands
 

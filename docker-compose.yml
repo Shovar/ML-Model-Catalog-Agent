@@ -4,8 +4,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      VLLM_ENDPOINT: ${VLLM_ENDPOINT:-http://host.docker.internal:8001/v1}
-      VLLM_MODEL: ${VLLM_MODEL:-Qwen/Qwen2.5-3B-Instruct}
+      LLM_ENDPOINT: ${LLM_ENDPOINT:-http://host.docker.internal:11434/v1}
+      LLM_MODEL: ${LLM_MODEL:-qwen2.5:3b}
     volumes:
       - catalogue_data:/app/catalogue.db
 

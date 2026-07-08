@@ -14,4 +14,3 @@ class ToolCallRecord(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     tool_calls_used: list[ToolCallRecord]
-    evidence: list[ToolCallRecord]

@@ -20,10 +20,10 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            - name: VLLM_ENDPOINT
-              value: "http://vllm-service:8001/v1"
-            - name: VLLM_MODEL
-              value: "Qwen/Qwen2.5-3B-Instruct"
+            - name: LLM_ENDPOINT
+              value: "http://ollama-service:11434/v1"
+            - name: LLM_MODEL
+              value: "qwen2.5:3b"
           livenessProbe:
             httpGet:
               path: /docs

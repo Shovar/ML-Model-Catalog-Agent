@@ -39,8 +39,8 @@ SYSTEM_PROMPT = (
 )
 
 llm = ChatOpenAI(
-    model=settings.vllm_model,
-    base_url=settings.vllm_endpoint,
+    model=settings.llm_model,
+    base_url=settings.llm_endpoint,
     api_key=settings.openai_api_key,
     temperature=0,
 )
