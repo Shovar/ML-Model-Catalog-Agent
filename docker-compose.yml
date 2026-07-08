@@ -1,0 +1,13 @@
+services:
+  catalogue-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      VLLM_ENDPOINT: ${VLLM_ENDPOINT:-http://host.docker.internal:8001/v1}
+      VLLM_MODEL: ${VLLM_MODEL:-Qwen/Qwen2.5-3B-Instruct}
+    volumes:
+      - catalogue_data:/app/catalogue.db
+
+volumes:
+  catalogue_data:

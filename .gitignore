@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*.db
+.env
+.DS_Store
+*.log
+.ruff_cache/
+design-plan.yaml

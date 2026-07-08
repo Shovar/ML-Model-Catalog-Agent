@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-catalogue-agent
+  labels:
+    app: ml-catalogue-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ml-catalogue-agent
+  template:
+    metadata:
+      labels:
+        app: ml-catalogue-agent
+    spec:
+      containers:
+        - name: agent
+          image: ml-catalogue-agent:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: VLLM_ENDPOINT
+              value: "http://vllm-service:8001/v1"
+            - name: VLLM_MODEL
+              value: "Qwen/Qwen2.5-3B-Instruct"
+          livenessProbe:
+            httpGet:
+              path: /docs
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /docs
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-catalogue-agent
+spec:
+  selector:
+    app: ml-catalogue-agent
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
