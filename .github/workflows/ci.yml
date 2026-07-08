@@ -29,6 +29,10 @@ jobs:
         run: |
           python -c "from catalogue.seed import seed; seed()"
 
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v
+
       - name: Verify app imports
         run: |
           python -c "from app.main import app; print('App loaded successfully')"

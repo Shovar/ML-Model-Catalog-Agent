@@ -1,4 +1,4 @@
-.PHONY: install dev run seed clean lint
+.PHONY: install dev run seed clean lint test
 
 install:
 	pip install -e .
@@ -15,6 +15,9 @@ seed:
 clean:
 	rm -f catalogue.db
 	rm -rf __pycache__ app/__pycache__ catalogue/__pycache__
+
+test:
+	python -m pytest tests/ -v
 
 lint:
 	ruff check . --fix

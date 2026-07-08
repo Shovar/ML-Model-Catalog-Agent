@@ -122,5 +122,6 @@ ollama pull qwen2.5:3b
 |---|---|
 | `make seed` | Seed SQLite with models and metrics |
 | `make run` | Start dev server on `:8000` |
+| `make test` | Run tool tests (in-memory SQLite, no LLM needed) |
 | `make lint` | Run ruff |
 | `make clean` | Delete database and caches |
